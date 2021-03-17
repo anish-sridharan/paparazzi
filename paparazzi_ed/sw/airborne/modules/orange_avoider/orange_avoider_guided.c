@@ -156,7 +156,7 @@ void orange_avoider_guided_periodic(void)
       break;
     case OBSTACLE_FOUND:
       // stop
-      //guidance_h_set_guided_body_vel(0, 0);
+      guidance_h_set_guided_body_vel(0, 0);
 
       // randomly select new search direction
       chooseRandomIncrementAvoidance();
@@ -166,7 +166,7 @@ void orange_avoider_guided_periodic(void)
       break;
     case SEARCH_FOR_SAFE_HEADING:
       guidance_h_set_guided_heading_rate(avoidance_heading_direction * oag_heading_rate);
-      guidance_h_set_guided_body_vel(0, -1); //Stupid change
+
       // make sure we have a couple of good readings before declaring the way safe
       if (obstacle_free_confidence >= 2){
         guidance_h_set_guided_heading(stateGetNedToBodyEulers_f()->psi);

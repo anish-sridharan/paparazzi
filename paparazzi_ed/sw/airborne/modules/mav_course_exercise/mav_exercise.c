@@ -24,6 +24,9 @@
 #include "firmwares/rotorcraft/navigation.h"
 #include "state.h"
 #include "autopilot_static.h"
+#include "firmwares/rotorcraft/autopilot_guided.h"
+#include "autopilot.h"
+#include "firmwares/rotorcraft/guidance.h"
 #include <stdio.h>
 #include <time.h>
 
@@ -51,8 +54,7 @@ enum navigation_state_t {
   OBSTACLE_FOUND,
   SEARCH_FOR_SAFE_HEADING,
   OUT_OF_BOUNDS,
-  REENTER_ARENA,
-  HOLD
+  REENTER_ARENA
 };
 
 // define and initialise global variables
@@ -73,8 +75,8 @@ float div_1 = 0.f;
 float div_thresh = 0.0001f;
 float oag_max_speed = 5.f;               // max flight speed [m/s]
 float oag_heading_rate = RadOfDeg(20.f);  // heading change setpoint for avoidance [rad/s]
-
-
+bool rotated = 0;
+int count = 0;
 // needed to receive output from a separate module running on a parallel process
 
 #ifndef ORANGE_AVOIDER_VISUAL_DETECTION_ID
@@ -144,8 +146,8 @@ void mav_exercise_periodic(void) {
   // compute current color thresholds
   // front_camera defined in airframe xml, with the video_capture module
   int32_t color_count_threshold = oa_color_count_frac * front_camera.output_size.w * front_camera.output_size.h;
-  int32_t floor_count_threshold = oag_floor_count_frac * front_camera.output_size.w * front_camera.output_size.h;
-  float floor_centroid_frac = floor_centroid / (float)front_camera.output_size.h / 2.f;
+  //int32_t floor_count_threshold = oag_floor_count_frac * front_camera.output_size.w * front_camera.output_size.h;
+  //float floor_centroid_frac = floor_centroid / (float)front_camera.output_size.h / 2.f;
 
   PRINT("Divergence: %f threshold: %f state: %d \n", div_1, div_thresh, navigation_state);
 
@@ -163,15 +165,17 @@ void mav_exercise_periodic(void) {
 
   switch (navigation_state) {
     case SAFE:
-	//setGuided();
+     
       
-     if (floor_count < floor_count_threshold || fabsf(floor_centroid_frac) > 0.12){
+     if (!InsideObstacleZone(stateGetPositionEnu_f()->x,stateGetPositionEnu_f()->y)){
         navigation_state = OUT_OF_BOUNDS;
       } 
       else if (obstacle_free_confidence == 0){
+        count = 0;
         navigation_state = OBSTACLE_FOUND;
       }
        else {
+        count = 0;
         guidance_h_set_guided_body_vel(1, 0);
       }
       /*
@@ -204,12 +208,12 @@ void mav_exercise_periodic(void) {
       navigation_state = SEARCH_FOR_SAFE_HEADING;
       break;
     case SEARCH_FOR_SAFE_HEADING:
-      //increase_nav_heading(heading_increment);
+      
 
       // make sure we have a couple of good readings before declaring the way safe
       
       //guidance_h_set_guided_heading(stateGetNedToBodyEulers_f()->psi + RadOfDeg(30.f));
-
+      
       guidance_h_set_guided_heading_rate(oag_heading_rate);
      
 
@@ -228,54 +232,77 @@ void mav_exercise_periodic(void) {
       break;
     case OUT_OF_BOUNDS:
       // stop
-	//setGuided();
+     
      guidance_h_set_guided_body_vel(0, 0);
 
       // start turn back into arena
-      guidance_h_set_guided_heading_rate(avoidance_heading_direction * RadOfDeg(15));
+      //guidance_h_set_guided_heading_rate(avoidance_heading_direction * RadOfDeg(15));
+     //guidance_h_set_guided_heading_rate(avoidance_heading_direction * RadOfDeg(180));
+     /*
+     if (InsideObstacleZone(stateGetPositionEnu_f()->x,stateGetPositionEnu_f()->y)){
+        // add offset to head back into arena
 
-      navigation_state = REENTER_ARENA;
-
-
-      break;
-    case REENTER_ARENA:
-
-      //guidance_h_set_guided_body_vel(0, 0);	
-	    // force floor center to opposite side of turn to head back into arena
-      if (floor_count >= floor_count_threshold && avoidance_heading_direction * floor_centroid_frac >= 0.f){
-        // return to heading mode
-        guidance_h_set_guided_heading(stateGetNedToBodyEulers_f()->psi);
-
+        guidance_h_set_guided_heading_rate(avoidance_heading_direction * RadOfDeg(15));
         // reset safe counter
         obstacle_free_confidence = 0;
 
         // ensure direction is safe before continuing
-        navigation_state = SAFE;
+        navigation_state = REENTER_ARENA;
+       }
+     */
+      rotated = 0;
+      if(count<10) 
+      {
+      while(!rotated){
+        rotated = autopilot_guided_goto_ned_relative (0,0,0,RadOfDeg(180));
+      } 
+      }
+       navigation_state = REENTER_ARENA;
+      break;
+    case REENTER_ARENA:
+     
+     //rotated = 0;
+     
+        //guidance_h_set_guided_heading_rate(oag_heading_rate);
+        
+    ++count;              
+     if(count>=10) 
+    {
+     
+     guidance_h_set_guided_body_vel(1, 0);
+     navigation_state = SEARCH_FOR_SAFE_HEADING;
+    }
+         
+        // add offset to head back into arena
 
-        /*
-        float angle;
-	
-        //guidance_h_set_guided_heading(angle);
-	PRINT("HELLO");	
-        //guidance_h_set_guided_body_vel(0, 0);
-        //guidance_h_set_guided_heading_rate(1 * RadOfDeg(15));
+        //guidance_h_set_guided_heading_rate(avoidance_heading_direction * RadOfDeg(15));
 
-	guidance_h_set_guided_heading(stateGetNedToBodyEulers_f()->psi+RadOfDeg(180.f));
-	//guidance_h_set_guided_body_vel(1, 0);
-	navigation_state = SAFE;
-        */
-        }
+        // reset safe counter
+       // obstacle_free_confidence = 0;
+
+        // ensure direction is safe before continuing
+       
+      
+      
+       
+      
+      //guidance_h_set_guided_body_vel(0, 0);	
+	    // force floor center to opposite side of turn to head back into arena
+        
+       
 	break;
-    case HOLD:
+
     default:
       break;
 
   }
+ return;
 }
 
 /*
  * Increases the NAV heading. Assumes heading is an INT32_ANGLE. It is bound in this function.
  */
+
 /*
 uint8_t increase_nav_heading(float incrementDegrees) {
   float new_heading = stateGetNedToBodyEulers_f()->psi + RadOfDeg(incrementDegrees);

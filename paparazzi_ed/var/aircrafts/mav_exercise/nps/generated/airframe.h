@@ -7,7 +7,7 @@
 
 #define AIRFRAME_NAME "mav_exercise"
 #define AC_ID 44
-#define MD5SUM ((uint8_t*)"\075\251\157\014\072\224\345\275\112\003\233\307\277\145\303\350")
+#define MD5SUM ((uint8_t*)"\321\252\113\011\213\241\057\057\245\236\204\166\363\062\266\107")
 
 #define COMMAND_PITCH 0
 #define COMMAND_ROLL 1

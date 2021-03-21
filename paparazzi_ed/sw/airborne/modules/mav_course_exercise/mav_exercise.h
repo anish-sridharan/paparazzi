@@ -24,9 +24,12 @@
 extern void mav_exercise_init(void);
 extern void mav_exercise_periodic(void);
 extern float div_thresh;
-extern float heading_increment; 
+extern float heading_increment;
 extern float oag_max_speed;         // max flight speed [m/s]
 extern float oag_heading_rate;      // heading rate setpoint [rad/s]
-extern float oag_floor_count_frac;  // floor detection threshold as a fraction of total of image
-
+extern double Kp;
+extern double Kd;
+extern float yaw_thresh;
+extern float dr_vel;
+extern float of_diff_thresh;
 #endif //PAPARAZZI_MAV_EXERCISE_H

@@ -624,8 +624,15 @@ inline void setGuided(void){
           <dl_setting var="mt9f002.target_exposure " step="0.1" shortname="exposure" param="MT9F002_TARGET_EXPOSURE" min="0.1" max="80"/>
           <dl_setting var="mt9f002_send_exposure" values="SEND" step="1" shortname="update_exposure" module="boards/bebop/mt9f002" min="1" max="1" handler="setting_update_exposure"/>
         </dl_settings>
+        <dl_settings name="Control gain">
+          <dl_setting var="Kp" step="0.00001" shortname="Kp" min="0.00001" max="0.001"/>
+          <dl_setting var="Kd" step="0.00001" shortname="Kd" min="0.00001" max="0.001"/>
+          <dl_setting var="yaw_thresh" step="0.1" shortname="yt" min="0.6" max="4"/>
+          <dl_setting var="dr_vel" step="0.5" shortname="vx" min="0.5" max="10"/>
+          <dl_setting var="of_diff_thresh" step="500" shortname="oft" min="0" max="4000"/>
+        </dl_settings>
         <dl_settings name="Divergence_threshold">
-          <dl_setting var="div_thresh" step="0.1" shortname="d_thresh" min="0" max="5"/>
+          <dl_setting var="div_thresh" step="100" shortname="d_thresh" min="10" max="2000"/>
           <dl_setting var="heading_increment" step="1" shortname="heading_inc" min="0" max="40"/>
         </dl_settings>
         <dl_settings name="INS">

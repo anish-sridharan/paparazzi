@@ -86,6 +86,11 @@
  { "mt9f002_send_color" }, \
  { "mt9f002.target_exposure " }, \
  { "mt9f002_send_exposure" }, \
+ { "Kp" }, \
+ { "Kd" }, \
+ { "yaw_thresh" }, \
+ { "dr_vel" }, \
+ { "of_diff_thresh" }, \
  { "div_thresh" }, \
  { "heading_increment" }, \
  { "vff.accel_noise" }, \
@@ -204,6 +209,11 @@
  "mt9_sen_col" , \
  "mt9_tar_exp" , \
  "mt9_sen_exp" , \
+ "Kp" , \
+ "Kd" , \
+ "yaw_thr" , \
+ "dr_vel" , \
+ "of_dif_thr" , \
  "div_thr" , \
  "hea_inc" , \
  "vff_acc_noi" , \
@@ -258,7 +268,7 @@
  "imu_bod_to_imu_e" , \
  "imu_b2i_set_cur" , \
 };
-#define NB_SETTING 116
+#define NB_SETTING 121
 #define DlSetting(_idx, _value) { \
   switch (_idx) { \
     case 0: telemetry_mode_Main = _value; break;\
@@ -324,66 +334,71 @@
     case 60: mt9f002_setting_update_color( _value ); _value = mt9f002_send_color; break;\
     case 61: mt9f002.target_exposure  = _value; break;\
     case 62: mt9f002_setting_update_exposure( _value ); _value = mt9f002_send_exposure; break;\
-    case 63: div_thresh = _value; break;\
-    case 64: heading_increment = _value; break;\
-    case 65: vff.accel_noise = _value; break;\
-    case 66: vff.r_baro = _value; break;\
-    case 67: vff.r_alt = _value; break;\
-    case 68: vff.r_obs_height = _value; break;\
-    case 69: ahrs_icq.gravity_heuristic_factor = _value; break;\
-    case 70: ahrs_int_cmpl_quat_SetAccelOmega( _value ); _value = ahrs_icq.accel_omega; break;\
-    case 71: ahrs_int_cmpl_quat_SetAccelZeta( _value ); _value = ahrs_icq.accel_zeta; break;\
-    case 72: ahrs_int_cmpl_quat_SetMagOmega( _value ); _value = ahrs_icq.mag_omega; break;\
-    case 73: ahrs_int_cmpl_quat_SetMagZeta( _value ); _value = ahrs_icq.mag_zeta; break;\
-    case 74: guidance_h_SetUseRef( _value ); _value = guidance_h.use_ref; break;\
-    case 75: guidance_h_SetMaxSpeed( _value ); _value = gh_ref.max_speed; break;\
-    case 76: guidance_h.approx_force_by_thrust = _value; break;\
-    case 77: guidance_h_SetTau( _value ); _value = gh_ref.tau; break;\
-    case 78: guidance_h_SetOmega( _value ); _value = gh_ref.omega; break;\
-    case 79: guidance_h_SetZeta( _value ); _value = gh_ref.zeta; break;\
-    case 80: guidance_h.gains.p = _value; break;\
-    case 81: guidance_h.gains.d = _value; break;\
-    case 82: guidance_h_set_igain( _value ); _value = guidance_h.gains.i; break;\
-    case 83: guidance_h.gains.v = _value; break;\
-    case 84: guidance_h.gains.a = _value; break;\
-    case 85: guidance_h.sp.pos.x = _value; break;\
-    case 86: guidance_h.sp.pos.y = _value; break;\
-    case 87: guidance_v_kp = _value; break;\
-    case 88: guidance_v_kd = _value; break;\
-    case 89: guidance_v_SetKi( _value ); _value = guidance_v_ki; break;\
-    case 90: guidance_v_nominal_throttle = _value; break;\
-    case 91: guidance_v_adapt_throttle_enabled = _value; break;\
-    case 92: guidance_v_z_sp = _value; break;\
-    case 93: navigation_SetFlightAltitude( _value ); _value = flight_altitude; break;\
-    case 94: nav_heading = _value; break;\
-    case 95: nav_radius = _value; break;\
-    case 96: nav_climb_vspeed = _value; break;\
-    case 97: nav_descend_vspeed = _value; break;\
-    case 98: indi.gains.att.p = _value; break;\
-    case 99: indi.gains.rate.p = _value; break;\
-    case 100: indi.g1.p = _value; break;\
-    case 101: indi.gains.att.q = _value; break;\
-    case 102: indi.gains.rate.q = _value; break;\
-    case 103: indi.g1.q = _value; break;\
-    case 104: indi.gains.att.r = _value; break;\
-    case 105: indi.gains.rate.r = _value; break;\
-    case 106: indi.g1.r = _value; break;\
-    case 107: indi.g2 = _value; break;\
-    case 108: indi.adaptive = _value; break;\
-    case 109: indi.max_rate = _value; break;\
-    case 110: indi.attitude_max_yaw_rate = _value; break;\
-    case 111: multi_gps_mode = _value; break;\
-    case 112: imu_SetBodyToImuPhi( _value ); _value = imu.body_to_imu.eulers_f.phi; break;\
-    case 113: imu_SetBodyToImuTheta( _value ); _value = imu.body_to_imu.eulers_f.theta; break;\
-    case 114: imu_SetBodyToImuPsi( _value ); _value = imu.body_to_imu.eulers_f.psi; break;\
-    case 115: imu_SetBodyToImuCurrent( _value ); _value = imu.b2i_set_current; break;\
+    case 63: Kp = _value; break;\
+    case 64: Kd = _value; break;\
+    case 65: yaw_thresh = _value; break;\
+    case 66: dr_vel = _value; break;\
+    case 67: of_diff_thresh = _value; break;\
+    case 68: div_thresh = _value; break;\
+    case 69: heading_increment = _value; break;\
+    case 70: vff.accel_noise = _value; break;\
+    case 71: vff.r_baro = _value; break;\
+    case 72: vff.r_alt = _value; break;\
+    case 73: vff.r_obs_height = _value; break;\
+    case 74: ahrs_icq.gravity_heuristic_factor = _value; break;\
+    case 75: ahrs_int_cmpl_quat_SetAccelOmega( _value ); _value = ahrs_icq.accel_omega; break;\
+    case 76: ahrs_int_cmpl_quat_SetAccelZeta( _value ); _value = ahrs_icq.accel_zeta; break;\
+    case 77: ahrs_int_cmpl_quat_SetMagOmega( _value ); _value = ahrs_icq.mag_omega; break;\
+    case 78: ahrs_int_cmpl_quat_SetMagZeta( _value ); _value = ahrs_icq.mag_zeta; break;\
+    case 79: guidance_h_SetUseRef( _value ); _value = guidance_h.use_ref; break;\
+    case 80: guidance_h_SetMaxSpeed( _value ); _value = gh_ref.max_speed; break;\
+    case 81: guidance_h.approx_force_by_thrust = _value; break;\
+    case 82: guidance_h_SetTau( _value ); _value = gh_ref.tau; break;\
+    case 83: guidance_h_SetOmega( _value ); _value = gh_ref.omega; break;\
+    case 84: guidance_h_SetZeta( _value ); _value = gh_ref.zeta; break;\
+    case 85: guidance_h.gains.p = _value; break;\
+    case 86: guidance_h.gains.d = _value; break;\
+    case 87: guidance_h_set_igain( _value ); _value = guidance_h.gains.i; break;\
+    case 88: guidance_h.gains.v = _value; break;\
+    case 89: guidance_h.gains.a = _value; break;\
+    case 90: guidance_h.sp.pos.x = _value; break;\
+    case 91: guidance_h.sp.pos.y = _value; break;\
+    case 92: guidance_v_kp = _value; break;\
+    case 93: guidance_v_kd = _value; break;\
+    case 94: guidance_v_SetKi( _value ); _value = guidance_v_ki; break;\
+    case 95: guidance_v_nominal_throttle = _value; break;\
+    case 96: guidance_v_adapt_throttle_enabled = _value; break;\
+    case 97: guidance_v_z_sp = _value; break;\
+    case 98: navigation_SetFlightAltitude( _value ); _value = flight_altitude; break;\
+    case 99: nav_heading = _value; break;\
+    case 100: nav_radius = _value; break;\
+    case 101: nav_climb_vspeed = _value; break;\
+    case 102: nav_descend_vspeed = _value; break;\
+    case 103: indi.gains.att.p = _value; break;\
+    case 104: indi.gains.rate.p = _value; break;\
+    case 105: indi.g1.p = _value; break;\
+    case 106: indi.gains.att.q = _value; break;\
+    case 107: indi.gains.rate.q = _value; break;\
+    case 108: indi.g1.q = _value; break;\
+    case 109: indi.gains.att.r = _value; break;\
+    case 110: indi.gains.rate.r = _value; break;\
+    case 111: indi.g1.r = _value; break;\
+    case 112: indi.g2 = _value; break;\
+    case 113: indi.adaptive = _value; break;\
+    case 114: indi.max_rate = _value; break;\
+    case 115: indi.attitude_max_yaw_rate = _value; break;\
+    case 116: multi_gps_mode = _value; break;\
+    case 117: imu_SetBodyToImuPhi( _value ); _value = imu.body_to_imu.eulers_f.phi; break;\
+    case 118: imu_SetBodyToImuTheta( _value ); _value = imu.body_to_imu.eulers_f.theta; break;\
+    case 119: imu_SetBodyToImuPsi( _value ); _value = imu.body_to_imu.eulers_f.psi; break;\
+    case 120: imu_SetBodyToImuCurrent( _value ); _value = imu.b2i_set_current; break;\
     default: break;\
   }\
 }
 #define PeriodicSendDlValue(_trans, _dev) { \
   static uint8_t i;\
   float var;\
-  if (i >= 116) i = 0;\
+  if (i >= 121) i = 0;\
   switch (i) { \
     case 0: var = telemetry_mode_Main; break;\
     case 1: var = pose_history_pose_periodic_status; break;\
@@ -448,59 +463,64 @@
     case 60: var = mt9f002_send_color; break;\
     case 61: var = mt9f002.target_exposure ; break;\
     case 62: var = mt9f002_send_exposure; break;\
-    case 63: var = div_thresh; break;\
-    case 64: var = heading_increment; break;\
-    case 65: var = vff.accel_noise; break;\
-    case 66: var = vff.r_baro; break;\
-    case 67: var = vff.r_alt; break;\
-    case 68: var = vff.r_obs_height; break;\
-    case 69: var = ahrs_icq.gravity_heuristic_factor; break;\
-    case 70: var = ahrs_icq.accel_omega; break;\
-    case 71: var = ahrs_icq.accel_zeta; break;\
-    case 72: var = ahrs_icq.mag_omega; break;\
-    case 73: var = ahrs_icq.mag_zeta; break;\
-    case 74: var = guidance_h.use_ref; break;\
-    case 75: var = gh_ref.max_speed; break;\
-    case 76: var = guidance_h.approx_force_by_thrust; break;\
-    case 77: var = gh_ref.tau; break;\
-    case 78: var = gh_ref.omega; break;\
-    case 79: var = gh_ref.zeta; break;\
-    case 80: var = guidance_h.gains.p; break;\
-    case 81: var = guidance_h.gains.d; break;\
-    case 82: var = guidance_h.gains.i; break;\
-    case 83: var = guidance_h.gains.v; break;\
-    case 84: var = guidance_h.gains.a; break;\
-    case 85: var = guidance_h.sp.pos.x; break;\
-    case 86: var = guidance_h.sp.pos.y; break;\
-    case 87: var = guidance_v_kp; break;\
-    case 88: var = guidance_v_kd; break;\
-    case 89: var = guidance_v_ki; break;\
-    case 90: var = guidance_v_nominal_throttle; break;\
-    case 91: var = guidance_v_adapt_throttle_enabled; break;\
-    case 92: var = guidance_v_z_sp; break;\
-    case 93: var = flight_altitude; break;\
-    case 94: var = nav_heading; break;\
-    case 95: var = nav_radius; break;\
-    case 96: var = nav_climb_vspeed; break;\
-    case 97: var = nav_descend_vspeed; break;\
-    case 98: var = indi.gains.att.p; break;\
-    case 99: var = indi.gains.rate.p; break;\
-    case 100: var = indi.g1.p; break;\
-    case 101: var = indi.gains.att.q; break;\
-    case 102: var = indi.gains.rate.q; break;\
-    case 103: var = indi.g1.q; break;\
-    case 104: var = indi.gains.att.r; break;\
-    case 105: var = indi.gains.rate.r; break;\
-    case 106: var = indi.g1.r; break;\
-    case 107: var = indi.g2; break;\
-    case 108: var = indi.adaptive; break;\
-    case 109: var = indi.max_rate; break;\
-    case 110: var = indi.attitude_max_yaw_rate; break;\
-    case 111: var = multi_gps_mode; break;\
-    case 112: var = imu.body_to_imu.eulers_f.phi; break;\
-    case 113: var = imu.body_to_imu.eulers_f.theta; break;\
-    case 114: var = imu.body_to_imu.eulers_f.psi; break;\
-    case 115: var = imu.b2i_set_current; break;\
+    case 63: var = Kp; break;\
+    case 64: var = Kd; break;\
+    case 65: var = yaw_thresh; break;\
+    case 66: var = dr_vel; break;\
+    case 67: var = of_diff_thresh; break;\
+    case 68: var = div_thresh; break;\
+    case 69: var = heading_increment; break;\
+    case 70: var = vff.accel_noise; break;\
+    case 71: var = vff.r_baro; break;\
+    case 72: var = vff.r_alt; break;\
+    case 73: var = vff.r_obs_height; break;\
+    case 74: var = ahrs_icq.gravity_heuristic_factor; break;\
+    case 75: var = ahrs_icq.accel_omega; break;\
+    case 76: var = ahrs_icq.accel_zeta; break;\
+    case 77: var = ahrs_icq.mag_omega; break;\
+    case 78: var = ahrs_icq.mag_zeta; break;\
+    case 79: var = guidance_h.use_ref; break;\
+    case 80: var = gh_ref.max_speed; break;\
+    case 81: var = guidance_h.approx_force_by_thrust; break;\
+    case 82: var = gh_ref.tau; break;\
+    case 83: var = gh_ref.omega; break;\
+    case 84: var = gh_ref.zeta; break;\
+    case 85: var = guidance_h.gains.p; break;\
+    case 86: var = guidance_h.gains.d; break;\
+    case 87: var = guidance_h.gains.i; break;\
+    case 88: var = guidance_h.gains.v; break;\
+    case 89: var = guidance_h.gains.a; break;\
+    case 90: var = guidance_h.sp.pos.x; break;\
+    case 91: var = guidance_h.sp.pos.y; break;\
+    case 92: var = guidance_v_kp; break;\
+    case 93: var = guidance_v_kd; break;\
+    case 94: var = guidance_v_ki; break;\
+    case 95: var = guidance_v_nominal_throttle; break;\
+    case 96: var = guidance_v_adapt_throttle_enabled; break;\
+    case 97: var = guidance_v_z_sp; break;\
+    case 98: var = flight_altitude; break;\
+    case 99: var = nav_heading; break;\
+    case 100: var = nav_radius; break;\
+    case 101: var = nav_climb_vspeed; break;\
+    case 102: var = nav_descend_vspeed; break;\
+    case 103: var = indi.gains.att.p; break;\
+    case 104: var = indi.gains.rate.p; break;\
+    case 105: var = indi.g1.p; break;\
+    case 106: var = indi.gains.att.q; break;\
+    case 107: var = indi.gains.rate.q; break;\
+    case 108: var = indi.g1.q; break;\
+    case 109: var = indi.gains.att.r; break;\
+    case 110: var = indi.gains.rate.r; break;\
+    case 111: var = indi.g1.r; break;\
+    case 112: var = indi.g2; break;\
+    case 113: var = indi.adaptive; break;\
+    case 114: var = indi.max_rate; break;\
+    case 115: var = indi.attitude_max_yaw_rate; break;\
+    case 116: var = multi_gps_mode; break;\
+    case 117: var = imu.body_to_imu.eulers_f.phi; break;\
+    case 118: var = imu.body_to_imu.eulers_f.theta; break;\
+    case 119: var = imu.body_to_imu.eulers_f.psi; break;\
+    case 120: var = imu.b2i_set_current; break;\
     default: var = 0.; break;\
   }\
   pprz_msg_send_DL_VALUE(_trans, _dev, AC_ID, &i, &var);\
@@ -571,59 +591,64 @@ static inline float settings_get_value(uint8_t i) {
     case 60: return mt9f002_send_color;
     case 61: return mt9f002.target_exposure ;
     case 62: return mt9f002_send_exposure;
-    case 63: return div_thresh;
-    case 64: return heading_increment;
-    case 65: return vff.accel_noise;
-    case 66: return vff.r_baro;
-    case 67: return vff.r_alt;
-    case 68: return vff.r_obs_height;
-    case 69: return ahrs_icq.gravity_heuristic_factor;
-    case 70: return ahrs_icq.accel_omega;
-    case 71: return ahrs_icq.accel_zeta;
-    case 72: return ahrs_icq.mag_omega;
-    case 73: return ahrs_icq.mag_zeta;
-    case 74: return guidance_h.use_ref;
-    case 75: return gh_ref.max_speed;
-    case 76: return guidance_h.approx_force_by_thrust;
-    case 77: return gh_ref.tau;
-    case 78: return gh_ref.omega;
-    case 79: return gh_ref.zeta;
-    case 80: return guidance_h.gains.p;
-    case 81: return guidance_h.gains.d;
-    case 82: return guidance_h.gains.i;
-    case 83: return guidance_h.gains.v;
-    case 84: return guidance_h.gains.a;
-    case 85: return guidance_h.sp.pos.x;
-    case 86: return guidance_h.sp.pos.y;
-    case 87: return guidance_v_kp;
-    case 88: return guidance_v_kd;
-    case 89: return guidance_v_ki;
-    case 90: return guidance_v_nominal_throttle;
-    case 91: return guidance_v_adapt_throttle_enabled;
-    case 92: return guidance_v_z_sp;
-    case 93: return flight_altitude;
-    case 94: return nav_heading;
-    case 95: return nav_radius;
-    case 96: return nav_climb_vspeed;
-    case 97: return nav_descend_vspeed;
-    case 98: return indi.gains.att.p;
-    case 99: return indi.gains.rate.p;
-    case 100: return indi.g1.p;
-    case 101: return indi.gains.att.q;
-    case 102: return indi.gains.rate.q;
-    case 103: return indi.g1.q;
-    case 104: return indi.gains.att.r;
-    case 105: return indi.gains.rate.r;
-    case 106: return indi.g1.r;
-    case 107: return indi.g2;
-    case 108: return indi.adaptive;
-    case 109: return indi.max_rate;
-    case 110: return indi.attitude_max_yaw_rate;
-    case 111: return multi_gps_mode;
-    case 112: return imu.body_to_imu.eulers_f.phi;
-    case 113: return imu.body_to_imu.eulers_f.theta;
-    case 114: return imu.body_to_imu.eulers_f.psi;
-    case 115: return imu.b2i_set_current;
+    case 63: return Kp;
+    case 64: return Kd;
+    case 65: return yaw_thresh;
+    case 66: return dr_vel;
+    case 67: return of_diff_thresh;
+    case 68: return div_thresh;
+    case 69: return heading_increment;
+    case 70: return vff.accel_noise;
+    case 71: return vff.r_baro;
+    case 72: return vff.r_alt;
+    case 73: return vff.r_obs_height;
+    case 74: return ahrs_icq.gravity_heuristic_factor;
+    case 75: return ahrs_icq.accel_omega;
+    case 76: return ahrs_icq.accel_zeta;
+    case 77: return ahrs_icq.mag_omega;
+    case 78: return ahrs_icq.mag_zeta;
+    case 79: return guidance_h.use_ref;
+    case 80: return gh_ref.max_speed;
+    case 81: return guidance_h.approx_force_by_thrust;
+    case 82: return gh_ref.tau;
+    case 83: return gh_ref.omega;
+    case 84: return gh_ref.zeta;
+    case 85: return guidance_h.gains.p;
+    case 86: return guidance_h.gains.d;
+    case 87: return guidance_h.gains.i;
+    case 88: return guidance_h.gains.v;
+    case 89: return guidance_h.gains.a;
+    case 90: return guidance_h.sp.pos.x;
+    case 91: return guidance_h.sp.pos.y;
+    case 92: return guidance_v_kp;
+    case 93: return guidance_v_kd;
+    case 94: return guidance_v_ki;
+    case 95: return guidance_v_nominal_throttle;
+    case 96: return guidance_v_adapt_throttle_enabled;
+    case 97: return guidance_v_z_sp;
+    case 98: return flight_altitude;
+    case 99: return nav_heading;
+    case 100: return nav_radius;
+    case 101: return nav_climb_vspeed;
+    case 102: return nav_descend_vspeed;
+    case 103: return indi.gains.att.p;
+    case 104: return indi.gains.rate.p;
+    case 105: return indi.g1.p;
+    case 106: return indi.gains.att.q;
+    case 107: return indi.gains.rate.q;
+    case 108: return indi.g1.q;
+    case 109: return indi.gains.att.r;
+    case 110: return indi.gains.rate.r;
+    case 111: return indi.g1.r;
+    case 112: return indi.g2;
+    case 113: return indi.adaptive;
+    case 114: return indi.max_rate;
+    case 115: return indi.attitude_max_yaw_rate;
+    case 116: return multi_gps_mode;
+    case 117: return imu.body_to_imu.eulers_f.phi;
+    case 118: return imu.body_to_imu.eulers_f.theta;
+    case 119: return imu.body_to_imu.eulers_f.psi;
+    case 120: return imu.b2i_set_current;
     default: return 0.;
   }
 }

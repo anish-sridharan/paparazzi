@@ -296,7 +296,7 @@ void opticflow_calc_init(struct opticflow_t *opticflow)
  * @return Was optical flow successful
  */
 bool calc_fast9_lukas_kanade(struct opticflow_t *opticflow, struct image_t *img,
-                             struct opticflow_result_t *result)
+                             struct opticflow_result_t *result, double *value)
 {
   if (opticflow->just_switched_method) {
     // Create the image buffers
@@ -418,6 +418,13 @@ bool calc_fast9_lukas_kanade(struct opticflow_t *opticflow, struct image_t *img,
                                        &result->tracked_cnt,
                                        opticflow->window_size / 2, opticflow->subpixel_factor, opticflow->max_iterations,
                                        opticflow->threshold_vec, opticflow->max_track_corners, opticflow->pyramid_level, keep_bad_points);
+  //Berry added
+  *value = 0;
+  for (int i=0;i < result->tracked_cnt; i++){
+    *value += sqrt(vectors[i].flow_x*vectors[i].flow_x + vectors[i].flow_y*vectors[i].flow_y)*(((int)(vectors[i].pos.y/opticflow->subpixel_factor) -
+    		(int)((img->h)/2))/abs((int)(vectors[i].pos.y/opticflow->subpixel_factor) - (int)((img->h)/2)));
+    //< Or use x_sub instead (subpixels, just like how the value is given) -- Check if sqrt is influential
+  }
 
 
   if (opticflow->track_back) {
@@ -983,7 +990,7 @@ bool calc_edgeflow_tot(struct opticflow_t *opticflow, struct image_t *img,
  * @param[out] *result The optical flow result
  */
 bool opticflow_calc_frame(struct opticflow_t *opticflow, struct image_t *img,
-                          struct opticflow_result_t *result)
+                          struct opticflow_result_t *result, double *value)
 {
   bool flow_successful = false;
   // A switch counter that checks in the loop if the current method is similar,
@@ -1000,7 +1007,7 @@ bool opticflow_calc_frame(struct opticflow_t *opticflow, struct image_t *img,
 
   // Switch between methods (0 = fast9/lukas-kanade, 1 = EdgeFlow)
   if (opticflow->method == 0) {
-    flow_successful = calc_fast9_lukas_kanade(opticflow, img, result);
+    flow_successful = calc_fast9_lukas_kanade(opticflow, img, result, value);
   } else if (opticflow->method == 1) {
     flow_successful = calc_edgeflow_tot(opticflow, img, result);
   }

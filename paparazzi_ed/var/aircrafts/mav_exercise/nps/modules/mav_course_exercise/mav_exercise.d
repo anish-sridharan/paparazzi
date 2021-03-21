@@ -48,6 +48,11 @@
  /home/denesh/paparazzi/sw/airborne/paparazzi.h \
  firmwares/rotorcraft/autopilot_firmware.h \
  firmwares/rotorcraft/autopilot_static.h \
+ /home/denesh/paparazzi/sw/airborne/firmwares/rotorcraft/autopilot_guided.h \
+ /home/denesh/paparazzi/sw/airborne/firmwares/rotorcraft/guidance.h \
+ /home/denesh/paparazzi/sw/airborne/firmwares/rotorcraft/guidance/guidance_v.h \
+ /home/denesh/paparazzi/sw/airborne/firmwares/rotorcraft/guidance/guidance_v_ref.h \
+ /home/denesh/paparazzi/sw/airborne/firmwares/rotorcraft/guidance/guidance_v_adapt.h \
  /home/denesh/paparazzi/var/aircrafts/mav_exercise/nps/generated/flight_plan.h \
  /home/denesh/paparazzi/var/aircrafts/mav_exercise/nps/generated/modules.h \
  modules/computer_vision/viewvideo.h modules/pose_history/pose_history.h \
@@ -73,8 +78,6 @@
  /home/denesh/paparazzi/sw/airborne/math/pprz_orientation_conversion.h \
  firmwares/rotorcraft/guidance/guidance_h.h \
  firmwares/rotorcraft/guidance/guidance_v.h \
- /home/denesh/paparazzi/sw/airborne/firmwares/rotorcraft/guidance/guidance_v_ref.h \
- /home/denesh/paparazzi/sw/airborne/firmwares/rotorcraft/guidance/guidance_v_adapt.h \
  /home/denesh/paparazzi/sw/airborne/firmwares/rotorcraft/stabilization.h \
  firmwares/rotorcraft/stabilization/stabilization_none.h \
  firmwares/rotorcraft/stabilization/stabilization_rate_indi.h \

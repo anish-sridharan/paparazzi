@@ -53,6 +53,7 @@ PRINT_CONFIG_VAR(OPTICFLOW_FPS)
 /* The main opticflow variables */
 struct opticflow_t opticflow;                      ///< Opticflow calculations
 static struct opticflow_result_t opticflow_result; ///< The opticflow result
+double value;
 
 static bool opticflow_got_result;                ///< When we have an optical flow calculation
 static pthread_mutex_t opticflow_mutex;            ///< Mutex lock fo thread safety
@@ -117,7 +118,7 @@ void opticflow_module_run(void)
                            opticflow_result.flow_der_x,
                            opticflow_result.flow_der_y,
                            opticflow_result.noise_measurement,
-                           opticflow_result.div_size);
+                           opticflow_result.div_size, value);
     //TODO Find an appropriate quality measure for the noise model in the state filter, for now it is tracked_cnt
     if (opticflow_result.noise_measurement < 0.8) {
       AbiSendMsgVELOCITY_ESTIMATE(VEL_OPTICFLOW_ID, now_ts,
@@ -151,10 +152,12 @@ struct image_t *opticflow_module_calc(struct image_t *img)
 
   // Do the optical flow calculation
   static struct opticflow_result_t temp_result; // static so that the number of corners is kept between frames
-  if(opticflow_calc_frame(&opticflow, img, &temp_result)){
+  double temp_value;
+  if(opticflow_calc_frame(&opticflow, img, &temp_result, &temp_value)){
     // Copy the result if finished
     pthread_mutex_lock(&opticflow_mutex);
     opticflow_result = temp_result;
+    value = temp_value;
     opticflow_got_result = true;
     pthread_mutex_unlock(&opticflow_mutex);
   }

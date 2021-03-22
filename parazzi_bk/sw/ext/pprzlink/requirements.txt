@@ -1,4 +1,0 @@
-ivy-python
-pyserial
-breathe
-lxml
